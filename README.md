@@ -1,5 +1,5 @@
 # fNIRS_HW
-The Code for the HW assignment.
+The Code for the HW assignment. \n
 The main function file is-MainFuncToTest.m
 The function to calculate fNIRS is-CalcNIRS.m
 The function to calculate the SNR, BPM, and FFT-CalcSNRandPulse.m
