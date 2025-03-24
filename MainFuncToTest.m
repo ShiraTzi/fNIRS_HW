@@ -78,9 +78,9 @@ title(sprintf("FFT of ΔHbR with BPM: %.2f and SNR: %.3f \n",pulseBPMHbR, SNRHbR
 
 
 
-
-
-%% Other Test for myself
+% end function for the assignment
+return
+%% Other Tests for myself
 %% Test 3- missing SDS
 
 % Source detector seperation
@@ -92,7 +92,10 @@ tissueType='adult_head';
 % Plot channel index
 plotChannelIdx=[1,3,5];
 
-%% Test 4-  SDS not the right type
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+
+%% Test 4-  SDS not the right type or value
 
 
 % Source detector seperation
@@ -103,6 +106,9 @@ tissueType='adult_head';
 
 % Plot channel index
 plotChannelIdx=[1,3,5];
+
+
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
 
 %% Test 5- missing Tissue type
 
@@ -116,7 +122,10 @@ tissueType=[];
 % Plot channel index
 plotChannelIdx=[1,3,5];
 
-%% Test 6- Tissue type not right
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+
+%% Test 6- Tissue type not the right type
 
 % Source detector seperation
 SDS=3;
@@ -126,6 +135,9 @@ tissueType=3;
 
 % Plot channel index
 plotChannelIdx=[1,3,5];
+
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
 
 %% Test 6- Tissue type not in table
 
@@ -138,6 +150,9 @@ tissueType='hello';
 % Plot channel index
 plotChannelIdx=[1,3,5];
 
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+
 %% Test 7- No data sent
 
 % Source detector seperation
@@ -148,6 +163,9 @@ tissueType='adult_head';
 
 % Plot channel index
 plotChannelIdx=[1,3,5];
+
+[ ~ , ~, ~ ] = CalcNIRS([], SDS, tissueType, plotChannelIdx); 
+
 
 %% Test 8- no plotting
 
@@ -160,6 +178,9 @@ tissueType='adult_head';
 % Plot channel index
 plotChannelIdx=[];
 
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+
 %% Test 9- plotting vector not the right type
 
 % Source detector seperation
@@ -170,3 +191,20 @@ tissueType='adult_head';
 
 % Plot channel index
 plotChannelIdx='hello';
+
+
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+%% Test 10- plotting vector with too big channels
+
+% Source detector seperation
+SDS=3;
+
+% tissue type
+tissueType='adult_head';
+
+% Plot channel index
+plotChannelIdx=[21];
+
+
+[ ~ , ~, ~ ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
