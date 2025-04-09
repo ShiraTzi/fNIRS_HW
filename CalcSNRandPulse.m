@@ -1,7 +1,12 @@
 
-%% CalcSNRandPulse - calculate the SNR, BPM, and FFT of the signal
+%% 
+% [SNR, powerSpectrum, frequencies, pulseFreq, pulsePower, pulseBPM]=CalcSNRandPulse(HinTime, Fs)
+%
+% Description - calculate the SNR, BPM, and FFT of a signal, based on the
+% given signal and sampling rate
+%
 % Input:
-% HinTime - an nx1 vector of the delta HbO or HbR
+% HinTime - an nx1 vector of the signal
 % Fs -the frequency of sampling (in Hz)
 % Output :
 % SNR - the sound to noise ratio of the signal, when:
