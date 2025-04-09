@@ -49,10 +49,10 @@ dataFile=dataFile2;
 tau=dataFile1.t(1,2)-dataFile1.t(1,1); %time between measurments
 Fs=1/tau; %sampling frequency
 % create an OD vector for channel 1 measurement for two labbdas
-ODChannel1Lambda1=dataFile1.d(1,1)./dataFile1.d(:,1);%OD of first channel
+ODChannel1Lambda1=dataFile1.d(1,1)./dataFile1.d(:,1);%OD of first lambda
 ODChannel1Lambda1=log10(ODChannel1Lambda1);
 
-ODChannel1Lambda2=dataFile1.d(1,21)./dataFile1.d(:,21);%OD of first channel
+ODChannel1Lambda2=dataFile1.d(1,21)./dataFile1.d(:,21);%OD of second lambda
 ODChannel1Lambda2=log10(ODChannel1Lambda2);
 
 % calculate FFT, SNR and BPM with the function CalcSNRandPulse
