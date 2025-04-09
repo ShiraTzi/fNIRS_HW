@@ -19,7 +19,6 @@
 % pulseBPM - the BPM of the strongest frequency, defined as
 % pulseFreq[Hz]*60[seconds per minute]
 
-
 function [SNR, powerSpectrum, frequencies, pulseFreq, pulsePower, pulseBPM]=CalcSNRandPulse(HinTime, Fs)
 
 % Calculating the fft of the first channel
@@ -30,7 +29,7 @@ frequencies = linspace(0, Fs/2, length(powerSpectrum)/2 + 1);
 powerSpectrum(length(frequencies)+1:end)=[];
 
 % take out DC
-dcFreq=0.8;
+dcFreq=0.5;
 indxDcFreq=frequencies<=dcFreq;
 frequencies(indxDcFreq)=[];
 powerSpectrum(indxDcFreq)=[];
