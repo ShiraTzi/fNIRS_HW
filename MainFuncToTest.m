@@ -28,8 +28,10 @@ plotChannelIdx=[1,2];
 % Data file to use
 dataFile=dataFile1;
 
-[ dHbR_1 , dHbO_1, fig_1 ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+[ dHbR_1 , dHbO_1, fig_1 ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx);
 
+%open the fig here
+figOpen=figure(fig_1);
 %% Test 2- second data
 
 % Source detector seperation
@@ -45,6 +47,9 @@ plotChannelIdx=[1,2];
 dataFile=dataFile2;
 
 [ dHbR_2 , dHbO_2, fig_2 ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelIdx); 
+
+%open the fig here
+figOpen=figure(fig_2);
 
 %% Here, we will find the FFT of the first subject, and calculate SNR
 

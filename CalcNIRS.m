@@ -165,7 +165,7 @@ if plot_flag
     dHbO_plot=dHbO(:,plotChannelIdx);
     % create Titles so we can see which channel is which
     legendTxt=["\Delta HbO" ,"\Delta HbR"];
-    fig=figure;
+    fig=figure('visible','off');
     numPlots=size(plotChannelIdx,2);
     % plot all channels
     for pl=1:numPlots
