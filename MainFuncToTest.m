@@ -59,7 +59,7 @@ Fs=1/tau; %sampling frequency
 ODChannel1Lambda1=dataFile1.d(1,1)./dataFile1.d(:,1);%OD of first lambda
 ODChannel1Lambda1=log10(ODChannel1Lambda1);
 
-ODChannel1Lambda2=dataFile1.d(1,21)./dataFile1.d(:,NUM_CHANNELS+1);%OD of second lambda
+ODChannel1Lambda2=dataFile1.d(1,NUM_CHANNELS+1)./dataFile1.d(:,NUM_CHANNELS+1);%OD of second lambda
 ODChannel1Lambda2=log10(ODChannel1Lambda2);
 
 % calculate FFT, SNR and BPM with the function CalcSNRandPulse
