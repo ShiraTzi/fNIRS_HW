@@ -5,6 +5,9 @@
 clear; 
 %% Open the important data
 
+%number of channels
+NUM_CHANNELS=20;
+
 % Intensity data
 dataFile1=open("FN_032_V1_Postdose1_Nback.mat");
 dataFile2=open('FN_031_V2_Postdose2_Nback.mat');
@@ -45,14 +48,13 @@ dataFile=dataFile2;
 
 %% Here, we will find the FFT of the first subject, and calculate SNR
 
-
 tau=dataFile1.t(1,2)-dataFile1.t(1,1); %time between measurments
 Fs=1/tau; %sampling frequency
 % create an OD vector for channel 1 measurement for two labbdas
 ODChannel1Lambda1=dataFile1.d(1,1)./dataFile1.d(:,1);%OD of first lambda
 ODChannel1Lambda1=log10(ODChannel1Lambda1);
 
-ODChannel1Lambda2=dataFile1.d(1,21)./dataFile1.d(:,21);%OD of second lambda
+ODChannel1Lambda2=dataFile1.d(1,21)./dataFile1.d(:,NUM_CHANNELS+1);%OD of second lambda
 ODChannel1Lambda2=log10(ODChannel1Lambda2);
 
 % calculate FFT, SNR and BPM with the function CalcSNRandPulse
@@ -67,14 +69,14 @@ plot(frequencies1,powerSpectrum1,'black')
 hold on
 plot(pulseFreq1,pulsePower1,'g*')
 xlabel("Frequency (Hz)")
-ylabel("Power")
+ylabel("Amplitude")
 title(sprintf("FFT of OD with BPM: %.2f and SNR: %.3f First Lambda \n",pulseBPM1, SNR1))
 subplot(2,1,2)
 plot(frequencies2,powerSpectrum2,'black')
 hold on
 plot(pulseFreq2,pulsePower2,'g*')
 xlabel("Frequency (Hz)")
-ylabel("Power")
+ylabel("Amplitude")
 title(sprintf("FFT of OD with BPM: %.2f and SNR: %.3f Second Lambda \n",pulseBPM2, SNR2))
 
 

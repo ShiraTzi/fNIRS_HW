@@ -12,7 +12,7 @@
 % SNR - the sound to noise ratio of the signal, when:
 % Sound- the signal strength at heart beat frequency
 % Noise - average of the signal in Fourier domain at Frequencies above 2.5Hz
-% powerSpectrum- the absolut of the FTT transform squared
+% powerSpectrum- the absolut of the FTT transform
 % frequencies- the frequencys of the FFT
 % pulseFreq- the frequency with the highest strengh (will probably the heartbeat frequency)
 % pulsePower- the strengh of the strongest frequency
@@ -22,9 +22,9 @@
 function [SNR, powerSpectrum, frequencies, pulseFreq, pulsePower, pulseBPM]=CalcSNRandPulse(HinTime, Fs)
 
 % Calculating the fft of the first channel
-powerSpectrum = abs(fft(HinTime)).^2;
+powerSpectrum = abs(fft(HinTime));
 
-%take only half the power spectrum (no nead to the two sides of the power spectrum)
+%take only half the spectrum
 frequencies = linspace(0, Fs/2, length(powerSpectrum)/2 + 1);
 powerSpectrum(length(frequencies)+1:end)=[];
 

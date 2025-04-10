@@ -30,11 +30,6 @@ function [ dHbR , dHbO, fig ] = CalcNIRS(dataFile, SDS, tissueType, plotChannelI
 % we will validate that each variable ansers the requirement. if not, an
 % error will be returned
 
-
-%%COMPLETE VALIDATION
-
-% number of channels for validation
-channels=20;
 % flag for plotting
 plot_flag=true;
 
@@ -49,11 +44,11 @@ else
     if ~isfield(dataFile,'t')||isempty(dataFile.t)||~isnumeric(dataFile.t)
         error("dataFile.t is empty or not the right type");
     end
-    if ~isfield(dataFile,'d')||isempty(dataFile.d)||~isnumeric(dataFile.d)||size(dataFile.d,2)~=2*channels
+    if ~isfield(dataFile,'d')||isempty(dataFile.d)||~isnumeric(dataFile.d)%||size(dataFile.d,2)~=2*channels
         error("dataFile.d is empty or not the right type or size");
     end
 
-    % now that we know all files exist, we need to validate the sizes are
+    % now that we know all the values exist, we need to validate the sizes are
     % compatible
     if size(dataFile.t,2)~=size(dataFile.d,1)
         error("dataFile.d and dataFile.t are not compatible in size");
@@ -61,9 +56,14 @@ else
 
 end
 
-% validate SDS
-if ~exist('SDS','var')||~isnumeric(SDS)
-    error("SDS is empty or not the right type");
+% Validate SDS
+if ~exist('SDS','var')||isempty(SDS)||~isnumeric(SDS)||SDS<=0
+    error("SDS is empty, below 0, or not the right type");
+end
+
+% validate tissueType
+if ~exist('tissueType','var')||isempty(tissueType)|| (~ischar(tissueType)&&~isstring(tissueType))
+    error("tissueType is empty or not the right type");
 end
 
 % Validate plotChannelIdx
@@ -72,10 +72,18 @@ if ~exist('plotChannelIdx','var')||isempty(plotChannelIdx)
     plot_flag=false;
 end
 
+if any(round(plotChannelIdx)~=plotChannelIdx) || any(~isnumeric(plotChannelIdx))
+    error("plotChannelIdx must be an integer vector (doesn't have to be from the integer class)");
+end
+
 
 % Validate DPFperTissueFile
 if ~exist('DPFperTissueFile','var')||isempty(DPFperTissueFile)
     DPFperTissueFile='.\DPFperTissue.txt';
+end
+
+if ~isfile(DPFperTissueFile)
+    error("DPFperTissueFile is not a recognisable file"); 
 end
 
 
@@ -84,16 +92,35 @@ if ~exist('extinctionCoefficientsFile','var')||isempty(extinctionCoefficientsFil
     extinctionCoefficientsFile='.\ExtinctionCoefficientsData.csv';
 end
 
+if ~isfile(extinctionCoefficientsFile)
+    error("extinctionCoefficientsFile is not a recognisable file"); 
+end
+
 % Validate relDPFfile
 if ~exist('relDPFfile','var')||isempty(relDPFfile)
     relDPFfile='.\RelativeDPFCoefficients.csv';
 end
 
-%% Extract the needed parameters
+if ~isfile(relDPFfile)
+    error("relDPFfile is not a recognisable file"); 
+end
+
+%% Extract the needed parameters and further validation
+% number of channels (assume is half the numbers of columns in intensity mmeasurements)
+channels=size(dataFile.d,2)/2;
+if mod(size(dataFile.d,2),2)==1
+    error("Missing channels")
+end
+if max(plotChannelIdx)>channels
+    error("Can't plot the channels in plotChannelIdx since some channels don't exist")
+end
 % DPF per Tissue
 DPFperTissueTable=readtable(DPFperTissueFile);
 % Find the DPF of a single type of tissue
 indx= strcmp( DPFperTissueTable.Tissue, tissueType);
+if all(indx==0)
+    error("Tisssue type doesn't exist in the given DPFperTissueTable")
+end
 DPFForExperiment=DPFperTissueTable(indx,:);
 DPF=DPFForExperiment.DPF(1,1);
 % Find Leff
@@ -103,11 +130,10 @@ MECTable=readtable(extinctionCoefficientsFile);
 % from the table, we will extract the HbR and HbO of two wavelength in a
 % 2x2 matrix
 MEC=zeros(2,2);
-MEC(1,1)=MECTable.HHb(MECTable.wavelength==dataFile.SD.Lambda(1));
-MEC(1,2)=MECTable.HbO2(MECTable.wavelength==dataFile.SD.Lambda(1));
-MEC(2,1)=MECTable.HHb(MECTable.wavelength==dataFile.SD.Lambda(2));
-MEC(2,2)=MECTable.HbO2(MECTable.wavelength==dataFile.SD.Lambda(2));
-%find the inverse matrix
+MEC(1,1)=MECTable.HbO2(MECTable.wavelength==dataFile.SD.Lambda(1));
+MEC(1,2)=MECTable.HbO2(MECTable.wavelength==dataFile.SD.Lambda(2));
+MEC(2,1)=MECTable.HHb(MECTable.wavelength==dataFile.SD.Lambda(1));
+MEC(2,2)=MECTable.HHb(MECTable.wavelength==dataFile.SD.Lambda(2));
 
 %% OD Calculation
 % now, we will calculate the intensity like explained in the excercise
@@ -121,12 +147,12 @@ OD=log10(OD);
 % create a matrix to save deltaHbR and deltaHbO for each minute
 dHbR=zeros(size(dataFile.t,2),channels);
 dHbO=zeros(size(dataFile.t,2),channels);
-%for each time, we calculate deltaHbR and deltaHbO
+%for each time, we calculate deltaHbR and deltaHbO (explanation how in paper)
 for c=1:channels
-    SmallOD=[OD(:,c), OD(:,c+channels)]/Leff;
-    HinTime=SmallOD/MEC;
-    dHbR(:,c)=HinTime(:,1);
-    dHbO(:,c)=HinTime(:,2);
+    SmallOD=[OD(:,c), OD(:,c+channels)];
+    HinTime=SmallOD/(MEC*Leff);
+    dHbO(:,c)=HinTime(:,1);
+    dHbR(:,c)=HinTime(:,2);
 end
 
 
@@ -141,6 +167,7 @@ if plot_flag
     legendTxt=["\Delta HbO" ,"\Delta HbR"];
     fig=figure;
     numPlots=size(plotChannelIdx,2);
+    % plot all channels
     for pl=1:numPlots
         titleTxt=strcat("Channel ", num2str(plotChannelIdx(pl)));
         subplot(numPlots,1,pl)
@@ -157,6 +184,7 @@ if plot_flag
 
 
 else
+    % if plotChannelIdx is empty
     fig=[];
 end
 
